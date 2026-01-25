@@ -9,7 +9,7 @@ API robusta em **.NET 10** com **Clean Architecture**, **Dapper** e **PostgreSQL
 
 ## ✨ Features
 
-- ✅ 5 Camadas de Arquitetura
+- ✅ 4 Camadas de Arquitetura
 - ✅ Exemplo completo (Product CRUD)
 - ✅ Testes Unitários
 - ✅ Documentação Scalar (OpenAPI)
@@ -32,15 +32,14 @@ dotnet run --project src/ApiDapperClean.Api # Executar
 
 ---
 
-## 📁 Estrutura (5 Camadas)
+## 📁 Estrutura (4 Camadas)
 
 ```
 src/
 ├── ApiDapperClean.Api/                # 🎨 HTTP (Controllers, Middleware)
 ├── ApiDapperClean.Application/        # 💼 Serviços, DTOs, Validators
 ├── ApiDapperClean.Domain/             # 🎯 Entities, Interfaces
-├── ApiDapperClean.Infrastructure/     # 🔧 Repositories, Database
-└── ApiDapperClean.CrossCutting/       # ⚙️ IoC, Results
+└── ApiDapperClean.Infrastructure/     # 🔧 Repositories, Database
 
 tests/
 └── ApiDapperClean.UnitTests/          # 🧪 19 Testes
@@ -55,7 +54,6 @@ tests/
 | **Domain**         | Entities, Interfaces, Regras de negócio |
 | **Application**    | Services, DTOs, Validators, Mappers     |
 | **Infrastructure** | Repositories, Database, Migrations      |
-| **CrossCutting**   | IoC, Results, Utilities                 |
 | **API**            | Controllers, Middlewares, HTTP          |
 
 ---
@@ -144,7 +142,7 @@ docker compose down        # Parar
 
 ## 📊 Padrões Implementados
 
-- ✅ Clean Architecture (5 camadas)
+- ✅ Clean Architecture (4 camadas)
 - ✅ Repository Pattern
 - ✅ Dependency Injection
 - ✅ Result Pattern
