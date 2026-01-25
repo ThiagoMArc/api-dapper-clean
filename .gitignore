@@ -1,0 +1,16 @@
+*.swp
+*.swo
+*~
+.DS_Store
+.vscode/
+.idea/
+bin/
+obj/
+.user
+*.user
+*.suo
+*.sln.docstates
+.vs/
+logs/
+*.log
+appsettings.local.json
