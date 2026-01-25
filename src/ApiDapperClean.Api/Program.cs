@@ -1,10 +1,16 @@
 using Serilog;
-using ApiDapperClean.CrossCutting.IoC;
 using ApiDapperClean.Api.Middlewares;
 using ApiDapperClean.Api.Filters;
 using ApiDapperClean.Infrastructure.Migrations;
 using Scalar.AspNetCore;
 using Serilog.Events;
+using FluentValidation;
+using ApiDapperClean.Application.Validators;
+using ApiDapperClean.Application.Services;
+using ApiDapperClean.Domain.Interfaces;
+using ApiDapperClean.Domain.Entities;
+using ApiDapperClean.Infrastructure.Data;
+using ApiDapperClean.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,10 +60,20 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Registrar dependências
-builder.Services.AddApplication();
+// Registrar validadores
+builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
+
+// Registrar serviços
+builder.Services.AddScoped<IProductService, ProductService>();
+
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
-builder.Services.AddInfrastructure(connectionString);
+
+// Registrar DbConnection
+builder.Services.AddScoped<IDbConnection>(_ => new DbConnection(connectionString));
+
+// Registrar repositórios
+builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
 
 var app = builder.Build();
 

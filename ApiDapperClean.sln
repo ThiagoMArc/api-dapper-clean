@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiDapperClean.Domain", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiDapperClean.Infrastructure", "src\ApiDapperClean.Infrastructure\ApiDapperClean.Infrastructure.csproj", "{6F4K0G8J-4J8I-9G2H-3K0F-7H8I9J0K1L2M}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiDapperClean.CrossCutting", "src\ApiDapperClean.CrossCutting\ApiDapperClean.CrossCutting.csproj", "{7G5L1H9K-5K9J-0H3I-4L1G-8I9J0K1L2M3N}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
