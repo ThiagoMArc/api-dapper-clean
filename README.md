@@ -170,14 +170,3 @@ dotnet watch test                         # Com watch
 - Shouldly
 
 ---
-
-## 📞 Próximas Etapas
-
-1. Adicionar novas entidades (Order, Customer, etc)
-2. Implementar autenticação JWT
-3. Paginação e filtros avançados
-4. Caching com Redis
-5. CI/CD com GitHub Actions
-6. Versionamento de API (v2, v3...)
-
----
