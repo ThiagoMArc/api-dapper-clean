@@ -168,5 +168,3 @@ dotnet watch test                         # Com watch
 - Padrão AAA (Arrange, Act, Assert)
 - Mocking com Moq
 - Shouldly
-
----
