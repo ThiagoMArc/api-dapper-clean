@@ -6,7 +6,7 @@ using Scalar.AspNetCore;
 using Serilog.Events;
 using FluentValidation;
 using ApiDapperClean.Application.Validators;
-using ApiDapperClean.Application.Services;
+using ApiDapperClean.Application.Services.v1;
 using ApiDapperClean.Domain.Interfaces;
 using ApiDapperClean.Domain.Entities;
 using ApiDapperClean.Infrastructure.Data;

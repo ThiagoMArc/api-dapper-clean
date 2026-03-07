@@ -1,10 +1,10 @@
 using ApiDapperClean.Application.DTOs.Product;
-using ApiDapperClean.Application.Services;
+using ApiDapperClean.Application.Services.v1;
 using Microsoft.AspNetCore.Mvc;
 using ApiDapperClean.Api.Requests;
 using ApiDapperClean.Api.Mappers;
 
-namespace ApiDapperClean.Api.Controllers;
+namespace ApiDapperClean.Api.Controllers.v1;
 
 /// <summary>
 /// Controller para gerenciamento de produtos

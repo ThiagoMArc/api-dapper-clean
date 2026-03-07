@@ -6,7 +6,7 @@ using ApiDapperClean.Domain.Results;
 using FluentValidation;
 using Serilog;
 
-namespace ApiDapperClean.Application.Services;
+namespace ApiDapperClean.Application.Services.v1;
 
 /// <summary>
 /// Implementação do serviço de Product

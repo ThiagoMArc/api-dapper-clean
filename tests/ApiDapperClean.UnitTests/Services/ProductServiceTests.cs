@@ -1,6 +1,5 @@
 using ApiDapperClean.Application.DTOs.Product;
-using ApiDapperClean.Application.Mappers;
-using ApiDapperClean.Application.Services;
+using ApiDapperClean.Application.Services.v1;
 using ApiDapperClean.Domain.Entities;
 using ApiDapperClean.Domain.Interfaces;
 using FluentValidation;
