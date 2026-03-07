@@ -1,5 +1,6 @@
 using ApiDapperClean.Domain.Entities;
 using ApiDapperClean.Domain.Interfaces;
+using ApiDapperClean.Domain.Results;
 using ApiDapperClean.Infrastructure.Data;
 using Dapper;
 
@@ -31,14 +32,27 @@ public abstract class DapperRepository<TEntity> : IRepository<TEntity> where TEn
         return result;
     }
 
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+    public virtual async Task<PagedDataResult<TEntity>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         using var connection = _dbConnection.GetConnection();
-        var sql = $"SELECT * FROM {TableName} WHERE \"IsDeleted\" = false ORDER BY \"CreatedAt\" DESC";
 
-        var results = await connection.QueryAsync<TEntity>(sql);
+        var sqlCount = $"SELECT COUNT(*) FROM {TableName} WHERE \"IsDeleted\" = false";
 
-        return results;
+        var sqlPaged = $"SELECT * FROM {TableName} WHERE \"IsDeleted\" = false ORDER BY \"Id\" OFFSET @Offset ROWS FETCH NEXT @Size ROWS ONLY";
+
+        var sql = $"{sqlCount}; {sqlPaged}";
+
+        var offset = (pageNumber - 1) * pageSize;
+
+        var multi = await connection.QueryMultipleAsync(sql, new { Offset = offset, Size = pageSize });
+
+        return new PagedDataResult<TEntity>
+        {
+            TotalItems = await multi.ReadSingleAsync<int>(),
+            Items = await multi.ReadAsync<TEntity>(),
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
     }
 
     public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)

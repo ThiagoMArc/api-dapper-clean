@@ -1,6 +1,8 @@
 using ApiDapperClean.Application.DTOs.Product;
 using ApiDapperClean.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using ApiDapperClean.Api.Requests;
+using ApiDapperClean.Api.Mappers;
 
 namespace ApiDapperClean.Api.Controllers;
 
@@ -8,7 +10,7 @@ namespace ApiDapperClean.Api.Controllers;
 /// Controller para gerenciamento de produtos
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/products")]
 [Produces("application/json")]
 public class ProductsController : ControllerBase
 {
@@ -45,9 +47,9 @@ public class ProductsController : ControllerBase
     /// <returns>Lista de produtos</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] GetProductsRequest request, CancellationToken cancellationToken)
     {
-        var result = await _service.GetAllAsync(cancellationToken);
+        var result = await _service.GetPagedAsync(request.ToDto(), cancellationToken);
 
         return Ok(result.Value);
     }

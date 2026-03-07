@@ -1,5 +1,6 @@
 using ApiDapperClean.Application.DTOs.Product;
 using ApiDapperClean.Domain.Entities;
+using ApiDapperClean.Domain.Results;
 
 namespace ApiDapperClean.Application.Mappers;
 
@@ -13,7 +14,7 @@ public static class ProductMapper
     /// </summary>
     public static ProductDto ToDto(Product product)
     {
-        if (product == null) return null!;
+        if (product == null) return new();
 
         return new ProductDto
         {
@@ -60,8 +61,18 @@ public static class ProductMapper
     /// <summary>
     /// Converte uma coleção de Product para coleção de ProductDto
     /// </summary>
-    public static IEnumerable<ProductDto> ToDtoList(IEnumerable<Product> products)
+    public static PagedDataResult<ProductDto> ToPagedDataDto(PagedDataResult<Product> pagedData)
     {
-        return products?.Select(ToDto) ?? Enumerable.Empty<ProductDto>();
+        if (pagedData == null) return new();
+
+        var dtos = pagedData.Items.Select(ToDto).ToList();
+
+        return new PagedDataResult<ProductDto>
+        {
+            Items = dtos,
+            TotalItems = pagedData.TotalItems,
+            PageNumber = pagedData.PageNumber,
+            PageSize = pagedData.PageSize
+        };
     }
 }

@@ -1,3 +1,5 @@
+using ApiDapperClean.Domain.Results;
+
 namespace ApiDapperClean.Domain.Interfaces;
 
 /// <summary>
@@ -12,9 +14,9 @@ public interface IRepository<TEntity> where TEntity : class
     Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Obtém todas as entidades
+    /// Obtém lista de entidades com paginação
     /// </summary>
-    Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<PagedDataResult<TEntity>> GetPagedAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adiciona uma nova entidade

@@ -74,28 +74,6 @@ public class ProductServiceTests
     }
 
     [Fact]
-    public async Task GetAllAsync_ShouldReturnAllProducts()
-    {
-        // Arrange
-        var products = new List<Product>
-        {
-            new Product { Id = Guid.NewGuid(), Name = "Notebook", Price = 2500.00m, Description = "Notebook", Stock = 10 },
-            new Product { Id = Guid.NewGuid(), Name = "Mouse", Price = 50.00m, Description = "Mouse", Stock = 50 }
-        };
-
-        _repositoryMock
-            .Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(products);
-
-        // Act
-        var result = await _service.GetAllAsync();
-
-        // Assert
-        result.IsSuccess.ShouldBeTrue();
-        result.Value.Count().ShouldBe(2);
-    }
-
-    [Fact]
     public async Task CreateAsync_WithValidData_ShouldReturnSuccess()
     {
         // Arrange
@@ -198,6 +176,77 @@ public class ProductServiceTests
         result.Value.ShouldNotBeNull();
         result.Value!.Name.ShouldBe("Notebook Atualizado");
         result.Value.Price.ShouldBe(2800.00m);
+    }
+
+    [Fact]
+    public async Task GetPagedAsync_WithValidParameters_ShouldReturnSuccess()
+    {
+        // Arrange
+        var page = 1;
+        var pageSize = 10;
+        var products = new List<Product>
+        {
+            new Product { Id = Guid.NewGuid(), Name = "Notebook", Price = 2500.00m, Description = "Notebook", Stock = 10 },
+            new Product { Id = Guid.NewGuid(), Name = "Mouse", Price = 50.00m, Description = "Mouse", Stock = 50 },
+            new Product { Id = Guid.NewGuid(), Name = "Teclado", Price = 150.00m, Description = "Teclado", Stock = 30 }
+        };
+
+        var pagedResult = new ApiDapperClean.Domain.Results.PagedDataResult<Product>
+        {
+            Items = products,
+            PageNumber = page,
+            PageSize = pageSize,
+            TotalItems = 3
+        };
+
+        var getProductsDto = new GetProductsDto { Page = page, PageSize = pageSize };
+
+        _repositoryMock
+            .Setup(r => r.GetPagedAsync(page, pageSize, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(pagedResult);
+
+        // Act
+        var result = await _service.GetPagedAsync(getProductsDto);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldNotBeNull();
+        result.Value!.Items.Count().ShouldBe(3);
+        result.Value.PageNumber.ShouldBe(page);
+        result.Value.PageSize.ShouldBe(pageSize);
+        result.Value.TotalItems.ShouldBe(3);
+        result.Value.Items.First().Name.ShouldBe("Notebook");
+    }
+
+    [Fact]
+    public async Task GetPagedAsync_WithEmptyPage_ShouldReturnSuccess()
+    {
+        // Arrange
+        var page = 5;
+        var pageSize = 10;
+
+        var pagedResult = new ApiDapperClean.Domain.Results.PagedDataResult<Product>
+        {
+            Items = new List<Product>(),
+            PageNumber = page,
+            PageSize = pageSize,
+            TotalItems = 0
+        };
+
+        var getProductsDto = new GetProductsDto { Page = page, PageSize = pageSize };
+
+        _repositoryMock
+            .Setup(r => r.GetPagedAsync(page, pageSize, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(pagedResult);
+
+        // Act
+        var result = await _service.GetPagedAsync(getProductsDto);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldNotBeNull();
+        result.Value!.Items.Count().ShouldBe(0);
+        result.Value.TotalItems.ShouldBe(0);
     }
 
     [Fact]

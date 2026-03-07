@@ -43,16 +43,16 @@ public class ProductService : IProductService
         return Result<ProductDto>.Success(dto);
     }
 
-    public async Task<Result<IEnumerable<ProductDto>>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<PagedDataResult<ProductDto>>> GetPagedAsync(GetProductsDto dto, CancellationToken cancellationToken = default)
     {
         Log.Information("Recuperando todos os produtos");
 
-        var products = await _repository.GetAllAsync(cancellationToken);
-        var dtos = ProductMapper.ToDtoList(products);
+        PagedDataResult<Product>? pagedDataProduct = await _repository.GetPagedAsync(dto.Page, dto.PageSize, cancellationToken);
+        PagedDataResult<ProductDto> pagedDataDto = ProductMapper.ToPagedDataDto(pagedDataProduct);
 
-        Log.Information("Total de {Count} produtos recuperados", products.Count());
+        Log.Information("Total de {Count} produtos recuperados", pagedDataProduct.TotalItems);
 
-        return Result<IEnumerable<ProductDto>>.Success(dtos);
+        return Result<PagedDataResult<ProductDto>>.Success(pagedDataDto);
     }
 
     public async Task<Result<ProductDto>> CreateAsync(CreateProductDto dto, CancellationToken cancellationToken = default)
