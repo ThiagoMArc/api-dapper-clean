@@ -17,24 +17,24 @@ public class Result<T>
     public T? Value { get; private set; }
 
     /// <summary>
-    /// Mensagem de erro em caso de falha
+    /// Mensagens de erro em caso de falha
     /// </summary>
-    public string? Error { get; private set; }
+    public IList<string>? Errors { get; private set; }
 
     /// <summary>
-    /// Código de erro
+    /// Códigos de erro
     /// </summary>
-    public int? ErrorCode { get; private set; }
+    public IList<int>? ErrorCodes { get; private set; }
 
     /// <summary>
     /// Inicializa uma nova instância de Result
     /// </summary>
-    private Result(bool isSuccess, T? value, string? error, int? errorCode)
+    private Result(bool isSuccess, T? value, IList<string>? error, IList<int>? errorCode)
     {
         IsSuccess = isSuccess;
         Value = value;
-        Error = error;
-        ErrorCode = errorCode;
+        Errors = error;
+        ErrorCodes = errorCode;
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public class Result<T>
     /// <summary>
     /// Cria um resultado de falha
     /// </summary>
-    public static Result<T> Failure(string error, int? errorCode = null)
+    public static Result<T> Failure(IList<string> error, IList<int>? errorCode = null)
         => new(false, default, error, errorCode);
 }
 

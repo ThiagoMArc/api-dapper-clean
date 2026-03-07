@@ -16,15 +16,18 @@ public class ProductService : IProductService
     private readonly IRepository<Product> _repository;
     private readonly IValidator<CreateProductDto> _createValidator;
     private readonly IValidator<UpdateProductDto> _updateValidator;
+    private readonly IValidator<GetProductsDto> _getProductsValidator;
 
     public ProductService(
         IRepository<Product> repository,
         IValidator<CreateProductDto> createValidator,
-        IValidator<UpdateProductDto> updateValidator)
+        IValidator<UpdateProductDto> updateValidator,
+        IValidator<GetProductsDto> getProductsValidator)
     {
         _repository = repository;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _getProductsValidator = getProductsValidator;
     }
 
     public async Task<Result<ProductDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -35,8 +38,7 @@ public class ProductService : IProductService
 
         if (product == null)
         {
-            Log.Warning("Produto com ID {ProductId} não encontrado", id);
-            return Result<ProductDto>.Failure("Produto não encontrado");
+            return Result<ProductDto>.Failure(["Produto não encontrado"]);
         }
 
         var dto = ProductMapper.ToDto(product);
@@ -46,6 +48,12 @@ public class ProductService : IProductService
     public async Task<Result<PagedDataResult<ProductDto>>> GetPagedAsync(GetProductsDto dto, CancellationToken cancellationToken = default)
     {
         Log.Information("Recuperando todos os produtos");
+
+        var validationResult = await _getProductsValidator.ValidateAsync(dto, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return Result<PagedDataResult<ProductDto>>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), null);
+        }
 
         PagedDataResult<Product>? pagedDataProduct = await _repository.GetPagedAsync(dto.Page, dto.PageSize, cancellationToken);
         PagedDataResult<ProductDto> pagedDataDto = ProductMapper.ToPagedDataDto(pagedDataProduct);
@@ -62,8 +70,7 @@ public class ProductService : IProductService
         var validationResult = await _createValidator.ValidateAsync(dto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            Log.Warning("Validação falhou ao criar produto: {Error}", validationResult.Errors.First().ErrorMessage);
-            return Result<ProductDto>.Failure(validationResult.Errors.First().ErrorMessage);
+            return Result<ProductDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), null);
         }
 
         var product = ProductMapper.ToEntity(dto);
@@ -83,15 +90,14 @@ public class ProductService : IProductService
         var validationResult = await _updateValidator.ValidateAsync(dto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            Log.Warning("Validação falhou ao atualizar produto {ProductId}: {Error}", id, validationResult.Errors.First().ErrorMessage);
-            return Result<ProductDto>.Failure(validationResult.Errors.First().ErrorMessage);
+            return Result<ProductDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), null);
         }
 
         var product = await _repository.GetByIdAsync(id, cancellationToken);
         if (product == null)
         {
             Log.Warning("Produto com ID {ProductId} não encontrado para atualização", id);
-            return Result<ProductDto>.Failure("Produto não encontrado");
+            return Result<ProductDto>.Failure(["Produto não encontrado"]);
         }
 
         ProductMapper.UpdateEntity(product, dto);
@@ -111,7 +117,6 @@ public class ProductService : IProductService
         var product = await _repository.GetByIdAsync(id, cancellationToken);
         if (product == null)
         {
-            Log.Warning("Produto com ID {ProductId} não encontrado para deleção", id);
             return Result.Failure("Produto não encontrado");
         }
 

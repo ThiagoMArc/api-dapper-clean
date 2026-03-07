@@ -35,7 +35,7 @@ public class ProductsController : ControllerBase
         var result = await _service.GetByIdAsync(id, cancellationToken);
 
         if (!result.IsSuccess)
-            return NotFound(new { error = result.Error });
+            return NotFound(new { errors = result.Errors });
 
         return Ok(result.Value);
     }
@@ -50,6 +50,9 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> GetAll([FromQuery] GetProductsRequest request, CancellationToken cancellationToken)
     {
         var result = await _service.GetPagedAsync(request.ToDto(), cancellationToken);
+
+        if (!result.IsSuccess)
+            return BadRequest(new { errors = result.Errors });
 
         return Ok(result.Value);
     }
@@ -68,7 +71,7 @@ public class ProductsController : ControllerBase
         var result = await _service.CreateAsync(dto, cancellationToken);
 
         if (!result.IsSuccess)
-            return BadRequest(new { error = result.Error });
+            return BadRequest(new { errors = result.Errors });
 
         return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id }, result.Value);
     }
@@ -90,10 +93,10 @@ public class ProductsController : ControllerBase
 
         if (!result.IsSuccess)
         {
-            if (result.Error == "Produto não encontrado")
-                return NotFound(new { error = result.Error });
+            if (result.Errors?.Contains("Produto não encontrado") == true)
+                return NotFound(new { errors = result.Errors });
 
-            return BadRequest(new { error = result.Error });
+            return BadRequest(new { errors = result.Errors });
         }
 
         return Ok(result.Value);

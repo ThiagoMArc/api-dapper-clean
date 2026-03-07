@@ -15,6 +15,7 @@ public class ProductServiceTests
     private readonly Mock<IRepository<Product>> _repositoryMock;
     private readonly Mock<IValidator<CreateProductDto>> _createValidatorMock;
     private readonly Mock<IValidator<UpdateProductDto>> _updateValidatorMock;
+    private readonly Mock<IValidator<GetProductsDto>> _getProductsValidatorMock;
     private readonly ProductService _service;
 
     public ProductServiceTests()
@@ -22,7 +23,12 @@ public class ProductServiceTests
         _repositoryMock = new Mock<IRepository<Product>>();
         _createValidatorMock = new Mock<IValidator<CreateProductDto>>();
         _updateValidatorMock = new Mock<IValidator<UpdateProductDto>>();
-        _service = new ProductService(_repositoryMock.Object, _createValidatorMock.Object, _updateValidatorMock.Object);
+        _getProductsValidatorMock = new Mock<IValidator<GetProductsDto>>();
+
+        _service = new ProductService(_repositoryMock.Object,
+                                       _createValidatorMock.Object,
+                                       _updateValidatorMock.Object,
+                                        _getProductsValidatorMock.Object);
     }
 
     [Fact]
@@ -69,7 +75,7 @@ public class ProductServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.ShouldNotBeNullOrEmpty();
+        result.Errors.ShouldNotBeEmpty();
         result.Value.ShouldBeNull();
     }
 
@@ -126,7 +132,7 @@ public class ProductServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.ShouldNotBeNullOrEmpty();
+        result.Errors.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -201,6 +207,11 @@ public class ProductServiceTests
 
         var getProductsDto = new GetProductsDto { Page = page, PageSize = pageSize };
 
+        var validationResult = new FluentValidation.Results.ValidationResult();
+        _getProductsValidatorMock
+            .Setup(v => v.ValidateAsync(getProductsDto, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(validationResult);
+
         _repositoryMock
             .Setup(r => r.GetPagedAsync(page, pageSize, It.IsAny<CancellationToken>()))
             .ReturnsAsync(pagedResult);
@@ -234,6 +245,11 @@ public class ProductServiceTests
         };
 
         var getProductsDto = new GetProductsDto { Page = page, PageSize = pageSize };
+
+        var validationResult = new FluentValidation.Results.ValidationResult();
+        _getProductsValidatorMock
+            .Setup(v => v.ValidateAsync(getProductsDto, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(validationResult);
 
         _repositoryMock
             .Setup(r => r.GetPagedAsync(page, pageSize, It.IsAny<CancellationToken>()))
