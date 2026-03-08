@@ -11,7 +11,6 @@ API robusta em **.NET 10** com **Clean Architecture**, **Dapper** e **PostgreSQL
 
 - ✅ 4 Camadas de Arquitetura
 - ✅ Exemplo completo (Product CRUD)
-- ✅ Paginação de dados em GetAll
 - ✅ Serviços segregados por operação
 - ✅ Testes Unitários
 - ✅ Documentação Scalar (OpenAPI)
