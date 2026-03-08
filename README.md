@@ -175,7 +175,7 @@ Cada serviço é injetado no controller e responsável por uma operação espec�
 ## 📈 Testes
 
 ```bash
-dotnet test                              # Todos (19 testes)
+dotnet test                              # Todos
 dotnet test --filter "ProductService"    # Serviço
 dotnet watch test                         # Com watch
 ```
