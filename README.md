@@ -43,7 +43,7 @@ src/
 └── ApiDapperClean.Infrastructure/     # 🔧 Repositories, Database
 
 tests/
-└── ApiDapperClean.UnitTests/          # 🧪 19 Testes
+└── ApiDapperClean.UnitTests/          # 🧪 33 Testes
 ```
 
 ---
@@ -55,7 +55,7 @@ tests/
 | **Domain**         | Entities, Interfaces, Regras de negócio |
 | **Application**    | Services, DTOs, Validators, Mappers     |
 | **Infrastructure** | Repositories, Database, Migrations      |
-| **API**            | Controllers, Middlewares, HTTP          |
+| **API**            | Controllers, Middlewares                |
 
 ---
 
