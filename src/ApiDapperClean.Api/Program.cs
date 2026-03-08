@@ -6,11 +6,15 @@ using Scalar.AspNetCore;
 using Serilog.Events;
 using FluentValidation;
 using ApiDapperClean.Application.Validators;
-using ApiDapperClean.Application.Services.v1;
 using ApiDapperClean.Domain.Interfaces;
 using ApiDapperClean.Domain.Entities;
 using ApiDapperClean.Infrastructure.Data;
 using ApiDapperClean.Infrastructure.Repositories;
+using ApiDapperClean.Application.Services.v1.Products.GetById;
+using ApiDapperClean.Application.Services.v1.Products.GetProducts;
+using ApiDapperClean.Application.Services.v1.Products.Create;
+using ApiDapperClean.Application.Services.v1.Products.Update;
+using ApiDapperClean.Application.Services.v1.Products.Delete;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +68,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
 
 // Registrar serviços
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IGetProductsService, GetProductsService>();
+builder.Services.AddScoped<IGetProductByIdService, GetProductByIdService>();
+builder.Services.AddScoped<ICreateProductService, CreateProductService>();
+builder.Services.AddScoped<IUpdateProductService, UpdateProductService>();
+builder.Services.AddScoped<IDeleteProductService, DeleteProductService>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";

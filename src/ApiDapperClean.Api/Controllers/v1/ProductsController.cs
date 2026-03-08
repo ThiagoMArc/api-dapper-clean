@@ -1,8 +1,12 @@
 using ApiDapperClean.Application.DTOs.Product;
-using ApiDapperClean.Application.Services.v1;
 using Microsoft.AspNetCore.Mvc;
 using ApiDapperClean.Api.Requests;
 using ApiDapperClean.Api.Mappers;
+using ApiDapperClean.Application.Services.v1.Products.GetById;
+using ApiDapperClean.Application.Services.v1.Products.GetProducts;
+using ApiDapperClean.Application.Services.v1.Products.Create;
+using ApiDapperClean.Application.Services.v1.Products.Update;
+using ApiDapperClean.Application.Services.v1.Products.Delete;
 
 namespace ApiDapperClean.Api.Controllers.v1;
 
@@ -14,11 +18,23 @@ namespace ApiDapperClean.Api.Controllers.v1;
 [Produces("application/json")]
 public class ProductsController : ControllerBase
 {
-    private readonly IProductService _service;
+    private readonly IGetProductsService _getProductsService;
+    private readonly IGetProductByIdService _getByIdService;
+    private readonly ICreateProductService _createService;
+    private readonly IUpdateProductService _updateService;
+    private readonly IDeleteProductService _deleteService;
 
-    public ProductsController(IProductService service)
+    public ProductsController(IGetProductsService getProductsService,
+                             IGetProductByIdService getByIdService,
+                             ICreateProductService createService,
+                             IUpdateProductService updateService,
+                             IDeleteProductService deleteService)
     {
-        _service = service;
+        _getProductsService = getProductsService;
+        _getByIdService = getByIdService;
+        _createService = createService;
+        _updateService = updateService;
+        _deleteService = deleteService;
     }
 
     /// <summary>
@@ -32,7 +48,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _service.GetByIdAsync(id, cancellationToken);
+        var result = await _getByIdService.GetByIdAsync(id, cancellationToken);
 
         if (!result.IsSuccess)
             return NotFound(new { errors = result.Errors });
@@ -49,7 +65,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll([FromQuery] GetProductsRequest request, CancellationToken cancellationToken)
     {
-        var result = await _service.GetPagedAsync(request.ToDto(), cancellationToken);
+        var result = await _getProductsService.GetPagedAsync(request.ToDto(), cancellationToken);
 
         if (!result.IsSuccess)
             return BadRequest(new { errors = result.Errors });
@@ -68,7 +84,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateProductDto dto, CancellationToken cancellationToken)
     {
-        var result = await _service.CreateAsync(dto, cancellationToken);
+        var result = await _createService.CreateAsync(dto, cancellationToken);
 
         if (!result.IsSuccess)
             return BadRequest(new { errors = result.Errors });
@@ -89,7 +105,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, UpdateProductDto dto, CancellationToken cancellationToken)
     {
-        var result = await _service.UpdateAsync(id, dto, cancellationToken);
+        var result = await _updateService.UpdateAsync(id, dto, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -113,7 +129,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _service.DeleteAsync(id, cancellationToken);
+        var result = await _deleteService.DeleteAsync(id, cancellationToken);
 
         if (!result.IsSuccess)
             return NotFound(new { error = result.Error });
