@@ -11,6 +11,8 @@ API robusta em **.NET 10** com **Clean Architecture**, **Dapper** e **PostgreSQL
 
 - ✅ 4 Camadas de Arquitetura
 - ✅ Exemplo completo (Product CRUD)
+- ✅ Paginação de dados em GetAll
+- ✅ Serviços segregados por operação
 - ✅ Testes Unitários
 - ✅ Documentação Scalar (OpenAPI)
 - ✅ Docker + docker-compose
@@ -27,7 +29,7 @@ dotnet run --project src/ApiDapperClean.Api # Executar
 
 # Acessar:
 # Docs: http://localhost:8080/scalar/v1
-# API:  http://localhost:8080/api/v1/products
+# API:  http://localhost:8080/api/v1/products?page=1&pageSize=10
 ```
 
 ---
@@ -60,28 +62,28 @@ tests/
 
 ## 🔌 API Endpoints
 
-| Método | Endpoint         | Descrição    |
-| ------ | ---------------- | ------------ |
-| GET    | `/products`      | Listar todos |
-| GET    | `/products/{id}` | Obter um     |
-| POST   | `/products`      | Criar        |
-| PUT    | `/products/{id}` | Atualizar    |
-| DELETE | `/products/{id}` | Deletar      |
+| Método | Endpoint         | Descrição            | Parâmetros            |
+| ------ | ---------------- | -------------------- | --------------------- |
+| GET    | `/products`      | Listar com paginação | `?page=1&pageSize=10` |
+| GET    | `/products/{id}` | Obter por ID         | -                     |
+| POST   | `/products`      | Criar                | -                     |
+| PUT    | `/products/{id}` | Atualizar            | -                     |
+| DELETE | `/products/{id}` | Deletar              | -                     |
 
 **Base URL**: `http://localhost:8080/api/v1`
 
 **Exemplos:**
 
 ```bash
-# Listar
-curl http://localhost:8080/api/v1/products
+# Listar com paginação (padrão: page=1, pageSize=10)
+curl "http://localhost:8080/api/v1/products?page=1&pageSize=10"
 
 # Criar
 curl -X POST http://localhost:8080/api/v1/products \
   -H "Content-Type: application/json" \
   -d '{"name":"Notebook","description":"High-end","price":2500,"stock":10}'
 
-# Obter
+# Obter por ID
 curl http://localhost:8080/api/v1/products/{id}
 
 # Atualizar
@@ -144,12 +146,30 @@ docker compose down        # Parar
 
 - ✅ Clean Architecture (4 camadas)
 - ✅ Repository Pattern
+- ✅ Service Segregation (Interface por operação)
 - ✅ Dependency Injection
 - ✅ Result Pattern
 - ✅ Mapper Pattern
 - ✅ SOLID Principles
 - ✅ CancellationToken Support
+- ✅ Pagination Support
 - ✅ Soft Delete
+
+---
+
+## 🏛️ Arquitetura de Serviços
+
+Serviços separados por operação
+
+```
+IGetProductsService          → GetPagedAsync(page, pageSize)
+IGetProductByIdService       → GetByIdAsync(id)
+ICreateProductService        → CreateAsync(dto)
+IUpdateProductService        → UpdateAsync(id, dto)
+IDeleteProductService        → DeleteAsync(id)
+```
+
+Cada serviço é injetado no controller e responsável por uma operação específica, facilitando testes unitários e manutenção.
 
 ---
 
