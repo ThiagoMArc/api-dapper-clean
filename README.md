@@ -43,7 +43,9 @@ src/
 └── ApiDapperClean.Infrastructure/     # 🔧 Repositories, Database
 
 tests/
-└── ApiDapperClean.UnitTests/          # 🧪 33 Testes
+└── ApiDapperClean.UnitTests/          # 🧪 86 Testes
+    ├── Services/                       # Testes de Serviços
+    └── Validators/                     # Testes de Validadores
 ```
 
 ---
@@ -153,6 +155,8 @@ docker compose down        # Parar
 - ✅ CancellationToken Support
 - ✅ Pagination Support
 - ✅ Soft Delete
+- ✅ FluentValidation
+- ✅ Comprehensive Unit Testing (Validators + Services)
 
 ---
 
@@ -172,16 +176,51 @@ Cada serviço é injetado no controller e responsável por uma operação espec�
 
 ---
 
-## 📈 Testes
+## 📈 Testes Unitários
 
-```bash
-dotnet test                              # Todos
-dotnet test --filter "ProductService"    # Serviço
-dotnet watch test                         # Com watch
+**86 Testes** distribuídos em:
+
+### Testes de Validadores (3 arquivos, ~38 testes)
+
+```
+Validators/
+├── CreateProductValidatorTests.cs   # Validações para criação
+├── UpdateProductValidatorTests.cs   # Validações para atualização
+└── GetProductsValidatorTests.cs     # Validações para paginação
 ```
 
 **Cobertura**:
 
-- Padrão AAA (Arrange, Act, Assert)
-- Mocking com Moq
-- Shouldly
+- Name, Price, Description, Stock validations
+- Boundary testing (mín/máx valores)
+- Error messages validation
+
+### Testes de Serviços (5 arquivos, ~48 testes)
+
+```
+Services/
+├── CreateProductServiceTests.cs      # Criação de produtos
+├── UpdateProductServiceTests.cs      # Atualização de produtos
+├── DeleteProductServiceTests.cs      # Deleção de produtos
+├── GetProductsServiceTests.cs        # Listagem com paginação
+└── GetProductByIdServiceTests.cs     # Busca por ID
+```
+
+### Executar Testes
+
+```bash
+dotnet test                              # Todos (86 testes)
+dotnet test --filter "Validator"         # Apenas Validators
+dotnet test --filter "Service"           # Apenas Services
+dotnet test --filter "ProductService"    # Específico
+dotnet watch test                         # Com watch
+```
+
+**Padrões Utilizados**:
+
+- ✅ Padrão AAA (Arrange, Act, Assert)
+- ✅ Mocking com Moq
+- ✅ Assertions com Shouldly
+- ✅ Theory Tests com InlineData
+- ✅ Boundary Value Testing
+- ✅ Multiple Error Scenarios
