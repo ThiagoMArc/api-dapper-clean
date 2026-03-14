@@ -5,10 +5,9 @@ using Xunit;
 
 namespace ApiDapperClean.UnitTests.Validators;
 
-public class ProductValidatorTests
+public class CreateProductValidatorTests
 {
     private readonly CreateProductValidator _createValidator = new();
-    private readonly UpdateProductValidator _updateValidator = new();
 
     [Fact]
     public async Task CreateValidator_WithValidData_ShouldNotHaveErrors()
