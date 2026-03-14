@@ -65,7 +65,7 @@ public static class ProductMapper
     {
         if (pagedData == null) return new();
 
-        var dtos = pagedData.Items.Select(ToDto).ToList();
+        var dtos = pagedData.Items.Select(ToDto).OrderBy(p => p.Name).ToList();
 
         return new PagedDataResult<ProductDto>
         {
