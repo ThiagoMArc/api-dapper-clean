@@ -5,6 +5,7 @@ using ApiDapperClean.Domain.Interfaces;
 using ApiDapperClean.Domain.Results;
 using FluentValidation;
 using Serilog;
+using System.Net;
 
 
 namespace ApiDapperClean.Application.Services.v1.Products.Update;
@@ -27,14 +28,15 @@ public class UpdateProductService : IUpdateProductService
         var validationResult = await _updateValidator.ValidateAsync(dto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            return Result<ProductDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), null);
+            var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            return Result<ProductDto>.Failure(errorMessages, HttpStatusCode.BadRequest);
         }
 
         var product = await _repository.GetByIdAsync(id, cancellationToken);
         if (product == null)
         {
             Log.Warning("Produto com ID {ProductId} não encontrado para atualização", id);
-            return Result<ProductDto>.Failure(["Produto não encontrado"]);
+            return Result<ProductDto>.Failure(["Produto não encontrado"], HttpStatusCode.NotFound);
         }
 
         ProductMapper.UpdateEntity(product, dto);
@@ -44,6 +46,6 @@ public class UpdateProductService : IUpdateProductService
         Log.Information("Produto {ProductId} atualizado com sucesso", id);
 
         var resultDto = ProductMapper.ToDto(product);
-        return Result<ProductDto>.Success(resultDto);
+        return Result<ProductDto>.Success(resultDto, HttpStatusCode.OK);
     }
 }

@@ -7,6 +7,7 @@ using ApiDapperClean.Application.Services.v1.Products.GetProducts;
 using ApiDapperClean.Application.Services.v1.Products.Create;
 using ApiDapperClean.Application.Services.v1.Products.Update;
 using ApiDapperClean.Application.Services.v1.Products.Delete;
+using ApiDapperClean.Domain.Results;
 
 namespace ApiDapperClean.Api.Controllers.v1;
 
@@ -16,7 +17,7 @@ namespace ApiDapperClean.Api.Controllers.v1;
 [ApiController]
 [Route("api/v1/products")]
 [Produces("application/json")]
-public class ProductsController : ControllerBase
+public class ProductsController : BaseController
 {
     private readonly IGetProductsService _getProductsService;
     private readonly IGetProductByIdService _getByIdService;
@@ -44,16 +45,13 @@ public class ProductsController : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Dados do produto</returns>
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<ProductDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _getByIdService.GetByIdAsync(id, cancellationToken);
+        Result<ProductDto> result = await _getByIdService.GetByIdAsync(id, cancellationToken);
 
-        if (!result.IsSuccess)
-            return NotFound(new { errors = result.Errors });
-
-        return Ok(result.Value);
+        return GenerateResponse(result);
     }
 
     /// <summary>
@@ -65,12 +63,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll([FromQuery] GetProductsRequest request, CancellationToken cancellationToken)
     {
-        var result = await _getProductsService.GetPagedAsync(request.ToDto(), cancellationToken);
-
-        if (!result.IsSuccess)
-            return BadRequest(new { errors = result.Errors });
-
-        return Ok(result.Value);
+        Result<PagedDataResult<ProductDto>> result = await _getProductsService.GetPagedAsync(request.ToDto(), cancellationToken);
+        return GenerateResponse(result);
     }
 
     /// <summary>
@@ -80,16 +74,12 @@ public class ProductsController : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Dados do produto criado</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Result<ProductDto>), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateProductDto dto, CancellationToken cancellationToken)
     {
-        var result = await _createService.CreateAsync(dto, cancellationToken);
-
-        if (!result.IsSuccess)
-            return BadRequest(new { errors = result.Errors });
-
-        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id }, result.Value);
+        Result<ProductDto> result = await _createService.CreateAsync(dto, cancellationToken);
+        return GenerateResponse(result);
     }
 
     /// <summary>
@@ -100,22 +90,13 @@ public class ProductsController : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Dados do produto atualizado</returns>
     [HttpPut("{id:guid}")]
-    [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Result<ProductDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, UpdateProductDto dto, CancellationToken cancellationToken)
     {
-        var result = await _updateService.UpdateAsync(id, dto, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            if (result.Errors?.Contains("Produto não encontrado") == true)
-                return NotFound(new { errors = result.Errors });
-
-            return BadRequest(new { errors = result.Errors });
-        }
-
-        return Ok(result.Value);
+        Result<ProductDto> result = await _updateService.UpdateAsync(id, dto, cancellationToken);
+        return GenerateResponse(result);
     }
 
     /// <summary>
@@ -129,11 +110,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _deleteService.DeleteAsync(id, cancellationToken);
-
-        if (!result.IsSuccess)
-            return NotFound(new { error = result.Error });
-
-        return NoContent();
+        Result<bool?> result = await _deleteService.DeleteAsync(id, cancellationToken);
+        return GenerateResponse(result);
     }
 }

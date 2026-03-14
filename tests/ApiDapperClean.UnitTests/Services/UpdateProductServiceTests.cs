@@ -66,9 +66,9 @@ public class UpdateProductServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldNotBeNull();
-        result.Value!.Name.ShouldBe("Notebook Atualizado");
-        result.Value.Price.ShouldBe(2800.00m);
+        result.Data.ShouldNotBeNull();
+        result.Data.Name.ShouldBe("Notebook Atualizado");
+        result.Data.Price.ShouldBe(2800.00m);
     }
 
     [Fact]

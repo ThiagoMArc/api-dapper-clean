@@ -1,5 +1,4 @@
 using ApiDapperClean.Application.DTOs.Product;
-using ApiDapperClean.Application.Services.v1;
 using ApiDapperClean.Application.Services.v1.Products.Create;
 using ApiDapperClean.Domain.Entities;
 using ApiDapperClean.Domain.Interfaces;
@@ -53,9 +52,9 @@ public class CreateProductServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldNotBeNull();
-        result.Value!.Name.ShouldBe("Notebook");
-        result.Value.Price.ShouldBe(2500.00m);
+        result.Data.ShouldNotBeNull();
+        result.Data.Name.ShouldBe("Notebook");
+        result.Data.Price.ShouldBe(2500.00m);
     }
 
     [Fact]

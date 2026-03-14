@@ -45,10 +45,10 @@ public class GetProductByIdServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldNotBeNull();
-        result.Value!.Id.ShouldBe(productId);
-        result.Value.Name.ShouldBe("Notebook");
-        result.Value.Price.ShouldBe(2500.00m);
+        result.Data.ShouldNotBeNull();
+        result.Data.Id.ShouldBe(productId);
+        result.Data.Name.ShouldBe("Notebook");
+        result.Data.Price.ShouldBe(2500.00m);
     }
 
     [Fact]
@@ -66,6 +66,6 @@ public class GetProductByIdServiceTests
         // Assert
         result.IsSuccess.ShouldBeFalse();
         result.Errors.ShouldNotBeEmpty();
-        result.Value.ShouldBeNull();
+        result.Data.ShouldBeNull();
     }
 }

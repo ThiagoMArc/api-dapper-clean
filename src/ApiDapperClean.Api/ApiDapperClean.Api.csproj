@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ApiDapperClean.Application\ApiDapperClean.Application.csproj" />
     <ProjectReference Include="..\ApiDapperClean.Infrastructure\ApiDapperClean.Infrastructure.csproj" />
+    <ProjectReference Include="..\ApiDapperClean.Domain\ApiDapperClean.Domain.csproj" />
   </ItemGroup>
 
 </Project>

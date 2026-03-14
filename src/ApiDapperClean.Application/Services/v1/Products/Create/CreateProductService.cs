@@ -5,6 +5,7 @@ using ApiDapperClean.Domain.Interfaces;
 using ApiDapperClean.Domain.Results;
 using FluentValidation;
 using Serilog;
+using System.Net;
 
 
 namespace ApiDapperClean.Application.Services.v1.Products.Create;
@@ -27,7 +28,8 @@ public class CreateProductService : ICreateProductService
         var validationResult = await _createValidator.ValidateAsync(dto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            return Result<ProductDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), null);
+            var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            return Result<ProductDto>.Failure(errorMessages, HttpStatusCode.BadRequest);
         }
 
         var product = ProductMapper.ToEntity(dto);
@@ -37,6 +39,6 @@ public class CreateProductService : ICreateProductService
         Log.Information("Produto criado com sucesso. ID: {ProductId}", product.Id);
 
         var resultDto = ProductMapper.ToDto(product);
-        return Result<ProductDto>.Success(resultDto);
+        return Result<ProductDto>.Success(resultDto, HttpStatusCode.Created);
     }
 }

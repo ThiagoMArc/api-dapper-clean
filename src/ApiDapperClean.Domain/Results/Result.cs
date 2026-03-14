@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace ApiDapperClean.Domain.Results;
 
 /// <summary>
@@ -12,9 +14,14 @@ public class Result<T>
     public bool IsSuccess { get; private set; }
 
     /// <summary>
-    /// Valor retornado em caso de sucesso
+    /// HttpStatusCode representando o status da operação
     /// </summary>
-    public T? Value { get; private set; }
+    public HttpStatusCode StatusCode { get; private set; }
+
+    /// <summary>
+    /// Dados retornados em caso de sucesso
+    /// </summary>
+    public T? Data { get; private set; }
 
     /// <summary>
     /// Mensagens de erro em caso de falha
@@ -22,73 +29,25 @@ public class Result<T>
     public IList<string>? Errors { get; private set; }
 
     /// <summary>
-    /// Códigos de erro
-    /// </summary>
-    public IList<int>? ErrorCodes { get; private set; }
-
-    /// <summary>
     /// Inicializa uma nova instância de Result
     /// </summary>
-    private Result(bool isSuccess, T? value, IList<string>? error, IList<int>? errorCode)
+    private Result(bool isSuccess, HttpStatusCode statusCode, T? value, IList<string>? error)
     {
         IsSuccess = isSuccess;
-        Value = value;
+        StatusCode = statusCode;
+        Data = value;
         Errors = error;
-        ErrorCodes = errorCode;
     }
 
     /// <summary>
     /// Cria um resultado de sucesso
     /// </summary>
-    public static Result<T> Success(T value)
-        => new(true, value, null, null);
+    public static Result<T> Success(T? value, HttpStatusCode statusCode)
+        => new(true, statusCode, value, []);
 
     /// <summary>
     /// Cria um resultado de falha
     /// </summary>
-    public static Result<T> Failure(IList<string> error, IList<int>? errorCode = null)
-        => new(false, default, error, errorCode);
-}
-
-/// <summary>
-/// Classe para representar o resultado de uma operação sem valor de retorno
-/// </summary>
-public class Result
-{
-    /// <summary>
-    /// Indica se a operação foi bem-sucedida
-    /// </summary>
-    public bool IsSuccess { get; private set; }
-
-    /// <summary>
-    /// Mensagem de erro em caso de falha
-    /// </summary>
-    public string? Error { get; private set; }
-
-    /// <summary>
-    /// Código de erro
-    /// </summary>
-    public int? ErrorCode { get; private set; }
-
-    /// <summary>
-    /// Inicializa uma nova instância de Result
-    /// </summary>
-    private Result(bool isSuccess, string? error, int? errorCode)
-    {
-        IsSuccess = isSuccess;
-        Error = error;
-        ErrorCode = errorCode;
-    }
-
-    /// <summary>
-    /// Cria um resultado de sucesso
-    /// </summary>
-    public static Result Success()
-        => new(true, null, null);
-
-    /// <summary>
-    /// Cria um resultado de falha
-    /// </summary>
-    public static Result Failure(string error, int? errorCode = null)
-        => new(false, error, errorCode);
+    public static Result<T> Failure(IList<string> errors, HttpStatusCode statusCode)
+        => new(false, statusCode, default, errors);
 }

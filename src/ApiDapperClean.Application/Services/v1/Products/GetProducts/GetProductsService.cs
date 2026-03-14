@@ -5,7 +5,7 @@ using ApiDapperClean.Domain.Interfaces;
 using ApiDapperClean.Domain.Results;
 using FluentValidation;
 using Serilog;
-
+using System.Net;
 
 namespace ApiDapperClean.Application.Services.v1.Products.GetProducts;
 
@@ -27,7 +27,8 @@ public class GetProductsService : IGetProductsService
         var validationResult = await _validator.ValidateAsync(dto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            return Result<PagedDataResult<ProductDto>>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), null);
+            var errorMessages = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            return Result<PagedDataResult<ProductDto>>.Failure(errorMessages, HttpStatusCode.BadRequest);
         }
 
         PagedDataResult<Product>? pagedDataProduct = await _repository.GetPagedAsync(dto.Page, dto.PageSize, cancellationToken);
@@ -35,6 +36,6 @@ public class GetProductsService : IGetProductsService
 
         Log.Information("Total de {Count} produtos recuperados", pagedDataProduct.TotalItems);
 
-        return Result<PagedDataResult<ProductDto>>.Success(pagedDataDto);
+        return Result<PagedDataResult<ProductDto>>.Success(pagedDataDto, HttpStatusCode.OK);
     }
 }

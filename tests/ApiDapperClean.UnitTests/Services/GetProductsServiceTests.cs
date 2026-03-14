@@ -59,12 +59,12 @@ public class GetProductsServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldNotBeNull();
-        result.Value!.Items.Count().ShouldBe(3);
-        result.Value.PageNumber.ShouldBe(page);
-        result.Value.PageSize.ShouldBe(pageSize);
-        result.Value.TotalItems.ShouldBe(3);
-        result.Value.Items.First().Name.ShouldBe("Notebook");
+        result.Data.ShouldNotBeNull();
+        result.Data.Items.Count().ShouldBe(3);
+        result.Data.PageNumber.ShouldBe(page);
+        result.Data.PageSize.ShouldBe(pageSize);
+        result.Data.TotalItems.ShouldBe(3);
+        result.Data.Items.First().Name.ShouldBe("Notebook");
     }
 
     [Fact]
@@ -98,9 +98,9 @@ public class GetProductsServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldNotBeNull();
-        result.Value!.Items.Count().ShouldBe(0);
-        result.Value.TotalItems.ShouldBe(0);
+        result.Data.ShouldNotBeNull();
+        result.Data.Items.Count().ShouldBe(0);
+        result.Data.TotalItems.ShouldBe(0);
     }
 
     [Fact]

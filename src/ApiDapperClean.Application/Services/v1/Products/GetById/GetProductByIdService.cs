@@ -3,8 +3,8 @@ using ApiDapperClean.Application.Mappers;
 using ApiDapperClean.Domain.Entities;
 using ApiDapperClean.Domain.Interfaces;
 using ApiDapperClean.Domain.Results;
-using FluentValidation;
 using Serilog;
+using System.Net;
 
 namespace ApiDapperClean.Application.Services.v1.Products.GetById;
 
@@ -25,10 +25,10 @@ public class GetProductByIdService : IGetProductByIdService
 
         if (product == null)
         {
-            return Result<ProductDto>.Failure(["Produto não encontrado"]);
+            return Result<ProductDto>.Failure(["Produto não encontrado"], HttpStatusCode.NotFound);
         }
 
         var dto = ProductMapper.ToDto(product);
-        return Result<ProductDto>.Success(dto);
+        return Result<ProductDto>.Success(dto, HttpStatusCode.OK);
     }
 }

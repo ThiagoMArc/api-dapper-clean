@@ -45,10 +45,11 @@ public class DeleteProductServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_WhenProductNotExists_ShouldReturnFailure()
+    public async Task DeleteAsync_WhenProductDoesntExist_ShouldReturnFailure()
     {
         // Arrange
         var productId = Guid.NewGuid();
+        string expectedErrorMessage = "Produto não encontrado";
 
         _repositoryMock
             .Setup(r => r.GetByIdAsync(productId, It.IsAny<CancellationToken>()))
@@ -59,7 +60,7 @@ public class DeleteProductServiceTests
 
         // Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.ShouldBe("Produto não encontrado");
+        result.Errors?.First().ShouldContain(expectedErrorMessage);
     }
 
     [Fact]
